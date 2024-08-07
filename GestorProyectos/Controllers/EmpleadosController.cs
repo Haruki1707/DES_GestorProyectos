@@ -19,9 +19,14 @@ namespace GestorProyectos.Controllers
         }
 
         // GET: Empleados
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Empleados.ToListAsync());
+            var empleadosDBContext = _context.Empleados.AsQueryable();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                empleadosDBContext = empleadosDBContext.Where(s => s.Nombre.Contains(searchString) || s.Apellido.Contains(searchString));
+            }
+            return View(await empleadosDBContext.ToListAsync());
         }
 
         // GET: Empleados/Details/5

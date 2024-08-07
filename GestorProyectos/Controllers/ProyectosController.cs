@@ -19,9 +19,14 @@ namespace GestorProyectos.Controllers
         }
 
         // GET: Proyectos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Proyectos.ToListAsync());
+            var proyectosDBContext = _context.Proyectos.Include(p => p.Asignaciones).AsQueryable();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                proyectosDBContext = proyectosDBContext.Where(s => s.Nombre.Contains(searchString) || s.Descripcion.Contains(searchString));
+            }
+            return View(await proyectosDBContext.ToListAsync());
         }
 
         // GET: Proyectos/Details/5
